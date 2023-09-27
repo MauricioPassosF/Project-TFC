@@ -10,7 +10,11 @@ export default class TeamsService {
 
   public async getAll(): Promise<ServiceResponse<ITeams[]>> {
     const teams = await this.teamsModel.findAll();
-    // console.log(teams);
     return { status: 'SUCCESSFULL', data: teams };
+  }
+
+  public async getById(id: string): Promise<ServiceResponse<ITeams | null>> {
+    const team = await this.teamsModel.findByPk(Number(id));
+    return { status: 'SUCCESSFULL', data: team };
   }
 }

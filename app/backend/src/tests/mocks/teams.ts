@@ -12,3 +12,8 @@ export const mockTeamsArray = [
     "teamName": "Botafogo"
   }
 ]
+
+export const mockTeam = {
+  "id": 2,
+  "teamName": "Bahia"
+}

@@ -17,4 +17,10 @@ export default class MatchesService {
     const filteredMatches = await this.matchesModel.findByStatus(inProgress === 'true');
     return { status: 'SUCCESSFULL', data: filteredMatches };
   }
+
+  public async finishMatch(id:string): Promise<ServiceResponse<{ message: string }>> {
+    await this.matchesModel.finishMatch(Number(id));
+    const data = { message: 'Finished' };
+    return { status: 'SUCCESSFULL', data };
+  }
 }

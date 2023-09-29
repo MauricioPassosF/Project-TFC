@@ -6,6 +6,7 @@ import SequelizeMatches from '../database/models/SequelizeMatches'
 import { app } from '../app'
 
 import { Response } from 'superagent';
+import * as jwt from 'jsonwebtoken';
 
 import { mockMatchesArray, mockMatchesIPArray, mockMatchesNIPArray } from './mocks/matches';
 import { IMatchesWithTeams } from '../Interfaces/matches/IMatches';
@@ -48,6 +49,17 @@ describe('Testes de integracao da rota matches', () => {
     chaiHttpResponse = await chai.request(app).get('/matches?inProgress=false')
     expect(chaiHttpResponse.status).to.equal(200);
     expect(chaiHttpResponse.body).to.deep.equal(mockMatchesNIPArray)
+  });
+
+  it('Metodo patch - /:id/finish com token valido', async () => {
+    sinon.stub(SequelizeMatches, 'update').resolves([1] as any)
+    sinon.stub(jwt, 'verify').callsFake(() => {
+      return {data: {email: 'teste@teste.com', role: 'User'}}
+    })
+    chaiHttpResponse = await chai.request(app).patch('/matches/:id/finish')
+      .set('Authorization', 'Bearer: token.true') 
+      expect(chaiHttpResponse.status).to.equal(200);
+      expect(chaiHttpResponse.body).to.deep.equal({ "message": "Finished" })
   });
 
   afterEach(sinon.restore);  

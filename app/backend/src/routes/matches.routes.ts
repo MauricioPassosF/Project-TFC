@@ -7,6 +7,13 @@ const router = Router();
 const matchesController = new MatchesController();
 
 router.get('/', (req: Request, res: Response) => matchesController.getAll(req, res));
+
+router.patch(
+  '/:id',
+  AuthValidations.ValidateToken,
+  (req: Request, res: Response) => matchesController.updateMatch(req, res),
+);
+
 router.patch(
   '/:id/finish',
   AuthValidations.ValidateToken,

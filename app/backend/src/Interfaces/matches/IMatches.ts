@@ -15,3 +15,8 @@ export interface IMatchesWithTeams extends IMatches {
     teamName: string
   },
 }
+
+export type ScoreInfo = {
+  homeTeamGoals: number;
+  awayTeamGoals: number;
+};

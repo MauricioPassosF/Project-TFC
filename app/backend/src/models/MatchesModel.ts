@@ -1,4 +1,4 @@
-import { IMatches } from '../Interfaces/matches/IMatches';
+import { IMatches, ScoreInfo } from '../Interfaces/matches/IMatches';
 import SequelizeMatches from '../database/models/SequelizeMatches';
 import { IMatchesModel } from '../Interfaces/matches/IMatchesModel';
 import SequelizeTeams from '../database/models/SequelizeTeams';
@@ -31,5 +31,9 @@ export default class MatchModel implements IMatchesModel {
 
   async finishMatch(id: number): Promise<void> {
     await this.model.update({ inProgress: false }, { where: { id } });
+  }
+
+  async updateMatch(scoreInfo: ScoreInfo, id: number): Promise<void> {
+    await this.model.update(scoreInfo, { where: { id } });
   }
 }

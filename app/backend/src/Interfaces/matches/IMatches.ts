@@ -20,3 +20,5 @@ export type ScoreInfo = {
   homeTeamGoals: number;
   awayTeamGoals: number;
 };
+
+export type NewMatch = Omit<IMatches, 'id' | 'inProgress'>;

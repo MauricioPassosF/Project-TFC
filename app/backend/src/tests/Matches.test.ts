@@ -79,5 +79,34 @@ describe('Testes de integracao da rota matches', () => {
     expect(chaiHttpResponse.body).to.deep.equal({ message: 'Updated' });
   });
 
+  it('Metodo post - /, com token valido e dados validos', async () => {
+    const mockCreate =  {
+    "homeTeamId": 16,
+    "awayTeamId": 8, 
+    "homeTeamGoals": 2,
+    "awayTeamGoals": 3
+    }
+    const mockReturn =  {
+      "id": 1,
+      "homeTeamId": 16,
+      "homeTeamGoals": 2,
+      "awayTeamId": 8,
+      "awayTeamGoals": 3,
+      "inProgress": true
+    };
+    const mockCreateReturn = SequelizeMatches.build(mockReturn)
+    sinon.stub(SequelizeMatches, 'create').resolves(mockCreateReturn);
+    sinon.stub(jwt, 'verify').callsFake(() => {
+      return { data: { email: 'teste@teste.com', role: 'User' } };
+    });
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .set('Authorization', 'Bearer: token.true')
+      .send(mockCreate);
+    expect(chaiHttpResponse.status).to.equal(201);
+    expect(chaiHttpResponse.body).to.deep.equal(mockReturn);
+  });
+
   afterEach(sinon.restore);
 });

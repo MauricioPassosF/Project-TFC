@@ -1,4 +1,4 @@
-import { IMatches, ScoreInfo } from '../Interfaces/matches/IMatches';
+import { IMatches, NewMatch, ScoreInfo } from '../Interfaces/matches/IMatches';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
 import { IMatchesModel } from '../Interfaces/matches/IMatchesModel';
 import MatchModel from '../models/MatchesModel';
@@ -29,5 +29,12 @@ export default class MatchesService {
     await this.matchesModel.updateMatch(scoreInfo, Number(id));
     const data = { message: 'Updated' };
     return { status: 'SUCCESSFULL', data };
+  }
+
+  public async createMatch(
+    matchInfo:NewMatch,
+  ): Promise<ServiceResponse<IMatches>> {
+    const newMatch = await this.matchesModel.create(matchInfo);
+    return { status: 'CREATED', data: newMatch };
   }
 }

@@ -17,4 +17,15 @@ export default class MatchModel implements IMatchesModel {
     return dbResponse;
     // return dbResponse.map((match) => match.toJSON());
   }
+
+  async findByStatus(inProgress: boolean): Promise<IMatches[]> {
+    const dbResponse = await this.model.findAll({
+      where: { inProgress },
+      include: [
+        { model: this.teamModel, as: 'homeTeam', attributes: ['teamName'] },
+        { model: this.teamModel, as: 'awayTeam', attributes: ['teamName'] },
+      ],
+    });
+    return dbResponse;
+  }
 }

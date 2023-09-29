@@ -12,4 +12,9 @@ export default class LoginController {
     const { data, status } = await this.loginService.authenticate({ email, password });
     return res.status(mapStatus(status)).json(data);
   }
+
+  public static async getRole(req:Request, res: Response): Promise<Response> {
+    const { role } = res.locals;
+    return res.status(200).json({ role });
+  }
 }

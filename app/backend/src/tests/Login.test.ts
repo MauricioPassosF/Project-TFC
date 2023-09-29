@@ -98,3 +98,33 @@ describe('Testes de integracao da rota login', () => {
 
   afterEach(sinon.restore);  
 });
+
+describe('Testes de integracao da rota login/role e middleware de autenticacao', () => {
+  let chaiHttpResponse: Response;
+
+  it('Metodo Get - sem token', async () => {
+    chaiHttpResponse = await chai.request(app).get('/login/role')
+    expect(chaiHttpResponse.status).to.equal(401);
+    expect(chaiHttpResponse.body).to.deep.equal({message: "Token not found" })
+  });
+
+  it('Metodo Get - com token invalido', async () => {
+    sinon.stub(jwt, 'verify').throws()
+    chaiHttpResponse = await chai.request(app).get('/login/role')
+      .set('Authorization', 'Bearer token.false') 
+    expect(chaiHttpResponse.status).to.equal(401);
+    expect(chaiHttpResponse.body).to.deep.equal({message: "Token must be a valid token" })
+  });
+
+  it('Metodo Get - com token valido', async () => {
+    sinon.stub(jwt, 'verify').callsFake(() => {
+      return {data: {email: 'teste@teste.com', role: 'User'}}
+    })
+    chaiHttpResponse = await chai.request(app).get('/login/role')
+      .set('Authorization', 'Bearer token.false') 
+    expect(chaiHttpResponse.status).to.equal(200);
+    expect(chaiHttpResponse.body).to.deep.equal({role: "User" })
+  });
+
+  afterEach(sinon.restore);  
+});

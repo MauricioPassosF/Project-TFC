@@ -11,6 +11,7 @@ import * as jwt from 'jsonwebtoken';
 import { mockMatchesArray, mockMatchesIPArray, mockMatchesNIPArray } from './mocks/matches';
 import { IMatchesWithTeams } from '../Interfaces/matches/IMatches';
 import SequelizeTeams from '../database/models/SequelizeTeams';
+import { mockTeam } from './mocks/teams';
 
 chai.use(chaiHttp);
 
@@ -95,6 +96,7 @@ describe('Testes de integracao da rota matches', () => {
       "inProgress": true
     };
     const mockCreateReturn = SequelizeMatches.build(mockReturn)
+    sinon.stub(SequelizeTeams, 'findByPk').resolves(mockTeam as any)
     sinon.stub(SequelizeMatches, 'create').resolves(mockCreateReturn);
     sinon.stub(jwt, 'verify').callsFake(() => {
       return { data: { email: 'teste@teste.com', role: 'User' } };
@@ -107,6 +109,46 @@ describe('Testes de integracao da rota matches', () => {
     expect(chaiHttpResponse.status).to.equal(201);
     expect(chaiHttpResponse.body).to.deep.equal(mockReturn);
   });
+
+  it('Metodo post - /, com token valido e times iguais', async () => {
+    const mockCreate =  {
+    "homeTeamId": 2,
+    "awayTeamId": 2, 
+    "homeTeamGoals": 2,
+    "awayTeamGoals": 3
+    }
+    sinon.stub(jwt, 'verify').callsFake(() => {
+      return { data: { email: 'teste@teste.com', role: 'User' } };
+    });
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .set('Authorization', 'Bearer: token.true')
+      .send(mockCreate);
+    expect(chaiHttpResponse.status).to.equal(422);
+    expect(chaiHttpResponse.body).to.deep.equal({ "message": "It is not possible to create a match with two equal teams" });
+  });
+
+  it('Metodo post - /, com token valido e time invalido', async () => {
+    const mockCreate =  {
+    "homeTeamId": 50,
+    "awayTeamId": 8, 
+    "homeTeamGoals": 2,
+    "awayTeamGoals": 3
+    }
+  
+    sinon.stub(SequelizeTeams, 'findByPk').resolves(null)
+    sinon.stub(jwt, 'verify').callsFake(() => {
+      return { data: { email: 'teste@teste.com', role: 'User' } };
+    });
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .set('Authorization', 'Bearer: token.true')
+      .send(mockCreate);
+      expect(chaiHttpResponse.status).to.equal(404);
+      expect(chaiHttpResponse.body).to.deep.equal({ "message": "There is no team with such id!" });
+    });
 
   afterEach(sinon.restore);
 });

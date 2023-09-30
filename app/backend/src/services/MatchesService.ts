@@ -1,10 +1,15 @@
+import TeamsModel from '../models/TeamsModel';
 import { IMatches, NewMatch, ScoreInfo } from '../Interfaces/matches/IMatches';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
 import { IMatchesModel } from '../Interfaces/matches/IMatchesModel';
 import MatchModel from '../models/MatchesModel';
+import { ITeamsModel } from '../Interfaces/teams/ITeamsModel';
 
 export default class MatchesService {
-  constructor(private matchesModel: IMatchesModel = new MatchModel()) {}
+  constructor(
+    private matchesModel: IMatchesModel = new MatchModel(),
+    private teamsModel: ITeamsModel = new TeamsModel(),
+  ) {}
 
   public async getAll(): Promise<ServiceResponse<IMatches[]>> {
     const matches = await this.matchesModel.findAll();
@@ -31,10 +36,20 @@ export default class MatchesService {
     return { status: 'SUCCESSFULL', data };
   }
 
-  public async createMatch(
-    matchInfo:NewMatch,
-  ): Promise<ServiceResponse<IMatches>> {
+  public async createMatch(matchInfo: NewMatch): Promise<ServiceResponse<IMatches>> {
+    const teamsAreValid = await this.validateTeams(matchInfo.homeTeamId, matchInfo.awayTeamId);
+    if (!teamsAreValid) {
+      return { status: 'NOT_FOUND', data: { message: 'There is no team with such id!' } };
+    }
     const newMatch = await this.matchesModel.create(matchInfo);
     return { status: 'CREATED', data: newMatch };
+  }
+
+  private async validateTeams(homeId: number, awayId: number): Promise<boolean> {
+    const validations = await Promise.all([
+      this.teamsModel.findByPk(homeId),
+      this.teamsModel.findByPk(awayId),
+    ]);
+    return !validations.includes(null);
   }
 }

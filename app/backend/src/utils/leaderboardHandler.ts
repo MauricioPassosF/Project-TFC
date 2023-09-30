@@ -11,7 +11,10 @@ export default class LeaderboardHandler {
       })
       .sort((first, second) => {
         if (first.totalPoints === second.totalPoints) {
-          return second.goalsFavor - first.goalsFavor;
+          if (first.goalsBalance === second.goalsBalance) {
+            return second.goalsFavor - first.goalsFavor;
+          }
+          return second.goalsBalance - first.goalsBalance;
         }
         return second.totalPoints - first.totalPoints;
       });
@@ -44,6 +47,8 @@ export default class LeaderboardHandler {
     const results = this.getResults(matches);
     const totalGames = matches.length;
     const totalPoints = results.totalDraws + (results.totalVictories * 3);
-    return { ...results, goalsFavor, goalsOwn, totalGames, totalPoints };
+    const goalsBalance = goalsFavor - goalsOwn;
+    const efficiency = Number(((totalPoints * 100) / (totalGames * 3)).toFixed(2));
+    return { ...results, goalsFavor, goalsOwn, totalGames, totalPoints, goalsBalance, efficiency };
   }
 }

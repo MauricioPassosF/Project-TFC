@@ -53,6 +53,8 @@ export const mockLeaderboardHome = [
     "totalLosses": 0,
     "goalsFavor": 3,
     "goalsOwn": 1,
+    "goalsBalance": 2,
+    "efficiency": 100.00
   },
   {
     "name": "Avaí/Kindermann",
@@ -63,6 +65,8 @@ export const mockLeaderboardHome = [
     "totalLosses": 0,
     "goalsFavor": 1,
     "goalsOwn": 1,
+    "goalsBalance": 0,
+    "efficiency": 33.33
   },
   {
     "name": "Botafogo",
@@ -73,5 +77,7 @@ export const mockLeaderboardHome = [
     "totalLosses": 1,
     "goalsFavor": 2,
     "goalsOwn": 4,
+    "goalsBalance": -2,
+    "efficiency": 0.00
   },
 ]  

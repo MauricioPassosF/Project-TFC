@@ -9,7 +9,7 @@ import { Response } from 'superagent';
 
 import SequelizeTeams from '../database/models/SequelizeTeams';
 import { mockTeamsArray } from './mocks/teams';
-import { mockLeaderboardHome, mockMatchesLeaderboardArray } from './mocks/leaderboard';
+import { mockLeaderboardAway, mockLeaderboardHome, mockMatchesLeaderboardArray } from './mocks/leaderboard';
 
 chai.use(chaiHttp);
 
@@ -26,6 +26,16 @@ describe('Testes de integracao da rota leaderboard', () => {
       chaiHttpResponse = await chai.request(app).get('/leaderboard/home');
       expect(chaiHttpResponse.status).to.equal(200);
       expect(chaiHttpResponse.body).to.deep.equal(mockLeaderboardHome);
+    });
+
+    it('Leaderboard Away', async () => {
+      const mockFindAllReturn = SequelizeTeams.bulkBuild(mockTeamsArray)
+      sinon.stub(SequelizeTeams, 'findAll').resolves(mockFindAllReturn)
+      sinon.stub(SequelizeMatches, 'findAll').resolves(mockMatchesLeaderboardArray as any);
+  
+      chaiHttpResponse = await chai.request(app).get('/leaderboard/away');
+      expect(chaiHttpResponse.status).to.equal(200);
+      expect(chaiHttpResponse.body).to.deep.equal(mockLeaderboardAway);
     });
 
   afterEach(sinon.restore);

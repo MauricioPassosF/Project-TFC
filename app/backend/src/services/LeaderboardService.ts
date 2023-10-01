@@ -18,4 +18,18 @@ export default class LeaderboardService {
     const leaderBoardHome = LeaderboardHandler.getLeaderboardHome(teams, finishedMatches);
     return { status: 'SUCCESSFULL', data: leaderBoardHome };
   }
+
+  public async getAllAway(): Promise<ServiceResponse<ILearderboard[]>> {
+    const teams = await this.teamsModel.findAll();
+    const finishedMatches = await this.matchesModel.findByStatus(false);
+    const leaderBoardAway = LeaderboardHandler.getLeaderboardAway(teams, finishedMatches);
+    return { status: 'SUCCESSFULL', data: leaderBoardAway };
+  }
+
+  public async getAll(): Promise<ServiceResponse<ILearderboard[]>> {
+    const teams = await this.teamsModel.findAll();
+    const finishedMatches = await this.matchesModel.findByStatus(false);
+    const leaderboard = LeaderboardHandler.getLeaderboard(teams, finishedMatches);
+    return { status: 'SUCCESSFULL', data: leaderboard };
+  }
 }

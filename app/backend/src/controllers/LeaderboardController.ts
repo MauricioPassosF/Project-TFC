@@ -9,4 +9,14 @@ export default class LeaderboardController {
     const { data, status } = await this.leaderboardService.getAllHome();
     return res.status(mapStatus(status)).json(data);
   }
+
+  public async getAllAway(_req: Request, res: Response): Promise<Response> {
+    const { data, status } = await this.leaderboardService.getAllAway();
+    return res.status(mapStatus(status)).json(data);
+  }
+
+  public async getAll(_req: Request, res: Response): Promise<Response> {
+    const { data, status } = await this.leaderboardService.getAll();
+    return res.status(mapStatus(status)).json(data);
+  }
 }
